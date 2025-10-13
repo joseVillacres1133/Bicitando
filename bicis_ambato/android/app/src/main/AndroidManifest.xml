@@ -9,7 +9,7 @@
     <application
         android:label="Bicitando"
         android:name="${applicationName}"
-        android:icon="@mipmap/sic_launcher">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"

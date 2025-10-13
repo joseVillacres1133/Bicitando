@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Bicis Ambato</string>
+	<string>Bicitando</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,11 +45,18 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- PERMISOS DE UBICACIÓN (SOLO PRIMER PLANO) -->
 	<key>NSLocationWhenInUseUsageDescription</key>
-<string>Esta aplicación necesita acceder a tu ubicación mientras esté en uso para mostrarte información relevante sobre lugares cercanos.</string>
-
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>Esta aplicación necesita acceder a tu ubicación en todo momento para proporcionarte una experiencia personalizada basada en tu ubicación, incluso cuando la aplicación no esté en primer plano.</string>
-
+	<string>Necesitamos tu ubicación mientras usas la app para mostrarte las bicicletas cercanas. Puedes elegir tu posición precisa o aproximada. Tu ubicación no será compartida con terceros.</string>
+	
+	<!-- PERMISOS DE CÁMARA -->
+	<key>NSCameraUsageDescription</key>
+	<string>Necesitamos acceso a tu cámara para escanear códigos QR de las bicicletas. Las imágenes no se guardan ni se comparten con terceros.</string>
+	
+	<!-- PERMISOS DE GALERÍA (si usas image_picker) -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Necesitamos acceso a tus fotos para que puedas seleccionar imágenes. Tus fotos no serán compartidas con terceros.</string>
+	
 </dict>
 </plist>
