@@ -1,0 +1,38 @@
+/**
+ * Parche para el módulo 'flutter_windowmanager':
+ * 1. Establece namespace (requisito AGP 8+)
+ * 2. Sube compileSdkVersion / targetSdkVersion a 34
+ * 3. Asegura compatibilidad Java 17 si fuera necesario
+ */
+subprojects { p ->
+    if (p.name == 'flutter_windowmanager') {
+
+        p.afterEvaluate {
+            def androidExt = p.extensions.findByName('android')
+            if (androidExt != null) {
+
+                /* 1️⃣  Namespace */
+                androidExt.namespace = 'io.adaptant.labs.flutter_windowmanager'
+
+                /* 2️⃣  compile / target SDK  */
+                // Para AGP 7.x – usa compileSdkVersion / targetSdkVersion
+                if (androidExt.hasProperty('compileSdkVersion')) {
+                    androidExt.compileSdkVersion = 34
+                    androidExt.defaultConfig.targetSdkVersion = 34
+                } else {
+                    // Para AGP 8+
+                    androidExt.compileSdk = 34
+                    androidExt.defaultConfig.targetSdk = 34
+                }
+
+                /* 3️⃣  Fuente Java 17 (opcional, tu proyecto ya lo hace) */
+                androidExt.compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+
+                println "[Patch] namespace y compileSdkVersion=34 fijados en ${p.name}"
+            }
+        }
+    }
+}

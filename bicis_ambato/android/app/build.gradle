@@ -1,0 +1,130 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    namespace "com.mivilsoft.bicis_ambato"
+    compileSdk 35
+    ndkVersion "27.0.12077973"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.mivilsoft.bicis_ambato"
+        minSdkVersion 21
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    // Configuración para resolver conflictos de dependencias
+    configurations.all {
+        resolutionStrategy {
+            // Forzar versiones específicas para evitar conflictos
+            force 'androidx.core:core:1.16.0'
+            force 'androidx.core:core-ktx:1.16.0'
+            force 'androidx.activity:activity:1.9.0'
+            force 'androidx.activity:activity-ktx:1.9.0'
+            force 'androidx.fragment:fragment:1.8.0'
+            force 'androidx.fragment:fragment-ktx:1.8.0'
+            force 'androidx.lifecycle:lifecycle-common:2.8.0'
+            force 'androidx.lifecycle:lifecycle-runtime:2.8.0'
+            force 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.0'
+            force 'androidx.savedstate:savedstate:1.2.1'
+            force 'androidx.camera:camera-core:1.3.4'
+            force 'androidx.camera:camera-camera2:1.3.4'
+            force 'androidx.camera:camera-lifecycle:1.3.4'
+            force 'androidx.camera:camera-video:1.3.4'
+        }
+    }
+
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    
+    // Dependencias AndroidX actualizadas a las versiones que quieres usar
+    implementation 'androidx.core:core:1.16.0'
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.activity:activity:1.9.0'
+    implementation 'androidx.activity:activity-ktx:1.9.0'
+    implementation 'androidx.fragment:fragment:1.8.0'
+    implementation 'androidx.fragment:fragment-ktx:1.8.0'
+    implementation 'androidx.lifecycle:lifecycle-common:2.8.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.8.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.0'
+    implementation 'androidx.savedstate:savedstate:1.2.1'
+    
+    // Para Google Play Services (versiones verificadas)
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+    
+    // Para multidex si es necesario
+    implementation 'androidx.multidex:multidex:2.0.1'
+}

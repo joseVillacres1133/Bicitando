@@ -1,0 +1,70 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url 'https://dl.google.com/dl/android/maven2'
+        }
+    }
+    dependencies {
+        // Actualizado de 7.4.2 a 8.5.2 (más estable que 8.6.0)
+        classpath 'com.android.tools.build:gradle:8.12.0'
+        // Actualizado también Google Services
+        classpath 'com.google.gms:google-services:4.4.2'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    // Forzar Java 17 en TODOS los proyectos
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            android {
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            }
+        }
+       
+        // Forzar Kotlin JVM target 17 en todos los proyectos
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+       
+        // Forzar Java 17 en todas las tareas de compilación Java
+        tasks.withType(JavaCompile).configureEach {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        }
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    afterEvaluate {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+        tasks.withType(JavaCompile).configureEach {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        }
+    }
+}
+
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

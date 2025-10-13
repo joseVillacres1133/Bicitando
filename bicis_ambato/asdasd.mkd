@@ -1,0 +1,36 @@
+# APIs de Secretaria de Movilidad
+
+_Dentro del "__**SERVICIO DE UNA PLATAFORMA DE MONITOREO Y CONTROL DE CUMPLIMIENTO DE INDICADORES DE CALIDAD DE SERVICIO PARA EL TRANSPORTE PÚBLICO DE PASAJEROS DEL DMQ**__", se han desarrollado APIs con el objetivo de facilitar la interoperabilidad entre todos los proveedores tecnológicos de las operadoras y la plataforma central. Estas APIs permiten el intercambio de datos cruciales como puntos de control, información de flotas, rutas, conductores y despachos, asegurando una integración efectiva y un monitoreo integral del servicio de transporte público._
+
+A continuación, se detallan todas las APIS disponibles:
+___
+
+### <span style="color:green">GET</span> **SM CREAR PUNTOS DE CONTROL**
+
+`{{base_url}}/web/create/bus_stops`
+
+Este método permite la creación de puntos de control dentro de la plataforma con los siguientes campos.
+
+| **Dato** | **Tipo de dato** |
+| --- | --- |
+| name | string |
+| latitude | double |
+| longitude | double |
+
+_**NOTA: Dentro del cuerpo de la solicitud se puede enviar 1 o varios puntos de control en una lista.**_
+
+_**Los mensajes de respuesta son:**_
+
+- _**200 - OK**_
+    
+- _**400 - ERROR y dentro de MENSAJE muestra el fallo**_
+    
+
+Se debe configurar de la siguiente manera, siendo campos y parámetros obligatorios a enviar:
+
+**Request Headers**
+*****
+`api_key`      `your_api_key`
+
+**Body** raw (json)
+--------------  ----------------
