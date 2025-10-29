@@ -322,7 +322,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
         builder: (ctx) => CameraPermissionScreen(
           onCameraGranted: () => Navigator.of(ctx).pop(true),
           onCameraDenied: () => Navigator.of(ctx).pop(false),
-          canSkip: false,
+          //canSkip: false,
         ),
       ),
     );

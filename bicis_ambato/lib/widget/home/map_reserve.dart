@@ -1314,7 +1314,7 @@ class MapReserveState extends State<MapReserve> {
         builder: (ctx) => CameraPermissionScreen(
           onCameraGranted: () => Navigator.of(ctx).pop(true),
           onCameraDenied: () => Navigator.of(ctx).pop(false),
-          canSkip: false, // o true, según tu flujo
+          //canSkip: false, // o true, según tu flujo
         ),
       ),
     );

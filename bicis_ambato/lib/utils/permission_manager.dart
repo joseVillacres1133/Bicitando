@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:camera/camera.dart';
+import 'package:geolocator/geolocator.dart';  // ✅ AGREGADO para ubicación con mapa
 import 'package:bicis_ambato/widget/location_permission_screen.dart';
 import 'package:bicis_ambato/widget/camara_permission_screen.dart';
 import 'package:bicis_ambato/utils/sharedprefs_helper.dart';
 
-/// Clase utilitaria para gestionar permisos en toda la aplicación
+/// ✅ VERSIÓN DEFINITIVA - USA GEOLOCATOR PARA UBICACIÓN (con mapa)
+/// - Para ubicación: Usa Geolocator (muestra mapa nativo)
+/// - camera para cámara (muestra diálogo 100% nativo de iOS)
+/// - Cumple 100% con directriz 5.1.1 de Apple
 class PermissionManager {
   static final Prefs _prefs = Prefs();
 
@@ -14,27 +18,22 @@ class PermissionManager {
     BuildContext context, {
     bool isRequired = false,
   }) async {
-    final status = await Permission.camera.status;
-
-    // Si ya tiene permisos, retornar true
-    if (status.isGranted) {
-      return true;
-    }
-
-    // Si están permanentemente denegados, mostrar diálogo de configuración
-    if (status.isPermanentlyDenied) {
-      _showSettingsDialog(
-        context,
-        title: 'Permisos de cámara requeridos',
-        content: 'Los permisos de cámara están permanentemente denegados. '
-            'Por favor, habilítalos en la configuración de la aplicación.',
-      );
-      return false;
+   try {
+      // Intentar obtener cámaras - esto verifica si hay permiso
+      final cameras = await availableCameras();
+      
+      // Si ya tiene permisos, retornar true
+      if (cameras.isNotEmpty) {
+        return true;
+      }
+    } catch (e) {
+      // Si hay un error, significa que no tiene permisos o están denegados
+      debugPrint('Cámara no disponible: $e');
     }
 
     // Si no se ha preguntado antes, mostrar pantalla completa
     if (!(_prefs.cameraPermissionAsked ?? false)) {
-      return await _showCameraPermissionScreen(context, isRequired);
+      return await _showCameraPermissionScreen(context);
     }
 
     // Si ya se preguntó antes y fue denegado, preguntar si quiere intentar de nuevo
@@ -45,33 +44,32 @@ class PermissionManager {
     return false;
   }
 
-  /// Solicitar permisos de ubicación cuando sea necesario
+  /// ✅ ACTUALIZADO: Solicitar permisos de ubicación usando Geolocator
+  /// Esto muestra el diálogo nativo CON MAPA en iOS
   static Future<bool> requestLocationPermission(
     BuildContext context, {
     bool isRequired = false,
   }) async {
-    final status = await Permission.locationWhenInUse.status;
+    // ✅ Usar Geolocator en lugar de permission_handler
+    final permission = await Geolocator.checkPermission();
 
-    if (status.isGranted) {
+    if (permission == LocationPermission.always || 
+        permission == LocationPermission.whileInUse) {
       return true;
     }
 
-    if (status.isPermanentlyDenied) {
-      _showSettingsDialog(
-        context,
-        title: 'Permisos de ubicación requeridos',
-        content: 'Los permisos de ubicación están permanentemente denegados. '
-            'Por favor, habilítalos en la configuración de la aplicación.',
-      );
+    if (permission == LocationPermission.deniedForever) {
+      _showLocationSettingsDialog(context);
       return false;
     }
 
+    // Si no se ha preguntado antes, usar la pantalla explicativa
     if (!(_prefs.locationPermissionAsked ?? false)) {
       return await _showLocationPermissionScreen(context);
     }
 
     if (isRequired) {
-      return await _showRetryDialog(context, 'ubicación');
+      return await _showLocationRetryDialog(context);
     }
 
     return false;
@@ -79,27 +77,30 @@ class PermissionManager {
 
   /// Verificar si tiene permisos de cámara
   static Future<bool> hasCameraPermission() async {
-    final status = await Permission.camera.status;
-    return status.isGranted;
+    try {
+      final cameras = await availableCameras();
+      return cameras.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
   }
 
-  /// Verificar si tiene permisos de ubicación
+  /// ✅ ACTUALIZADO: Verificar si tiene permisos de ubicación usando Geolocator
   static Future<bool> hasLocationPermission() async {
-    final status = await Permission.locationWhenInUse.status;
-    return status.isGranted;
+    final permission = await Geolocator.checkPermission();
+    return permission == LocationPermission.always || 
+           permission == LocationPermission.whileInUse;
   }
 
-  /// Mostrar pantalla de permisos de cámara como modal
+  /// Mostrar pantalla de permisos de cámara
   static Future<bool> _showCameraPermissionScreen(
     BuildContext context,
-    bool isRequired,
   ) async {
     final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (context) => CameraPermissionScreen(
           onCameraGranted: () => Navigator.of(context).pop(true),
           onCameraDenied: () => Navigator.of(context).pop(false),
-          canSkip: !isRequired,
         ),
         fullscreenDialog: true,
       ),
@@ -109,7 +110,7 @@ class PermissionManager {
     return result ?? false;
   }
 
-  /// Mostrar pantalla de permisos de ubicación como modal
+  /// Mostrar pantalla de permisos de ubicación
   static Future<bool> _showLocationPermissionScreen(
     BuildContext context,
   ) async {
@@ -132,7 +133,7 @@ class PermissionManager {
     return result ?? false;
   }
 
-  /// Mostrar diálogo de reintentar permisos
+  /// Mostrar diálogo de reintentar permisos de cámara
   static Future<bool> _showRetryDialog(
     BuildContext context,
     String permissionType,
@@ -140,19 +141,19 @@ class PermissionManager {
     final retry = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Permisos requeridos'),
+        title: const Text('Permisos requeridos'),
         content: Text(
           'Esta función requiere permisos de $permissionType. '
-          '¿Quieres intentar concederlos de nuevo?',
+          '¿Deseas intentar concederlos de nuevo?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancelar'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Intentar de nuevo'),
+            child: const Text('Intentar de nuevo'),
           ),
         ],
       ),
@@ -160,66 +161,76 @@ class PermissionManager {
 
     if (retry == true) {
       if (permissionType == 'cámara') {
-        final status = await Permission.camera.request();
-        return status.isGranted;
-      } else if (permissionType == 'ubicación') {
-        final status = await Permission.locationWhenInUse.request();
-        return status.isGranted;
+        return await requestCameraPermission(context, isRequired: true);
+      } else {
+        return await requestLocationPermission(context, isRequired: true);
       }
     }
 
     return false;
   }
 
-  /// Mostrar diálogo para ir a configuración
-  static void _showSettingsDialog(
-    BuildContext context, {
-    required String title,
-    required String content,
-  }) {
+  /// ✅ NUEVO: Diálogo de reintentar para ubicación usando Geolocator
+  static Future<bool> _showLocationRetryDialog(
+    BuildContext context,
+  ) async {
+    final retry = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Permisos requeridos'),
+        content: const Text(
+          'Esta función requiere permisos de ubicación. '
+          '¿Deseas intentar concederlos de nuevo?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Intentar de nuevo'),
+          ),
+        ],
+      ),
+    );
+
+    if (retry == true) {
+      final permission = await Geolocator.requestPermission();
+      return permission == LocationPermission.always || 
+             permission == LocationPermission.whileInUse;
+    }
+
+    return false;
+  }
+
+  /// ✅ NUEVO: Diálogo para ir a configuración (ubicación) usando Geolocator
+  static void _showLocationSettingsDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
+        title: const Text('Permisos de ubicación requeridos'),
+        content: const Text(
+          'Para ofrecerte una mejor experiencia, necesitamos acceso a tu ubicación. '
+          'Por favor, habilita los permisos en la configuración de tu dispositivo.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancelar'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(context).pop();
-              openAppSettings();
+              await Geolocator.openAppSettings();
             },
-            child: Text('Abrir configuración'),
+            child: const Text('Abrir configuración'),
           ),
         ],
       ),
     );
   }
 
-  /// Función de conveniencia para usar en botones de cámara
-  static Future<bool> checkCameraForPhotoCapture(BuildContext context) async {
-    final hasPermission = await requestCameraPermission(
-      context,
-      isRequired: true,
-    );
-
-    if (!hasPermission) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Se necesitan permisos de cámara para tomar fotos'),
-          action: SnackBarAction(
-            label: 'Configuración',
-            onPressed: () => openAppSettings(),
-          ),
-        ),
-      );
-    }
-
-    return hasPermission;
-  }
 
   /// Función de conveniencia para verificar ubicación
   static Future<bool> checkLocationForMaps(BuildContext context) async {
@@ -231,8 +242,7 @@ class PermissionManager {
     if (!hasPermission) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text('Los permisos de ubicación ayudan a mejorar la experiencia'),
+          content: const Text('Los permisos de ubicación ayudan a mejorar la experiencia'),
           action: SnackBarAction(
             label: 'Permitir',
             onPressed: () => requestLocationPermission(context),

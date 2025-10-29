@@ -331,11 +331,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         return CameraPermissionScreen(
           onCameraGranted: _onCameraPermissionGranted,
           onCameraDenied: _onCameraPermissionDenied,
-          canSkip: true,
+          //canSkip: true,
         );
       }
     }
-
     // 3. Una vez completados los permisos, mostrar la app normal
     return BlocBuilder<AuthBloc, AuthState>(
       bloc: _authBloc,
@@ -462,7 +461,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           onCameraDenied: () {
             Navigator.of(context).pop(false);
           },
-          canSkip: false,
+          //canSkip: false,
         ),
       ),
     );
