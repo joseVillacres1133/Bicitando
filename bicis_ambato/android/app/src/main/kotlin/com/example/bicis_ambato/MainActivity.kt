@@ -1,4 +1,4 @@
-package com.mivilsoft.bicis_ambato
+package com.mivilsoft.bicisambato
 
 import io.flutter.embedding.android.FlutterActivity
 

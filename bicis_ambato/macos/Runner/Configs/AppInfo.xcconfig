@@ -8,7 +8,7 @@
 PRODUCT_NAME = bicis_ambato
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.mivilsoft.bicisAmbato
+PRODUCT_BUNDLE_IDENTIFIER = com.mivilsoft.bicisambato
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.mivilsoft. All rights reserved.

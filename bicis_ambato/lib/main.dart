@@ -42,6 +42,12 @@ import 'widget/auth/resetPassword_form.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // AGREGAR ESTO: Configurar el status bar para que sea visible
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+  );
+
   // Inicializar solo lo esencial de forma síncrona
   final prefs = Prefs();
   await prefs.init();
@@ -264,9 +270,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           _themeCubit.emit(_prefs!.isDarkThemeEnabled);
 
           return MaterialApp(
+            
             title: 'Ambato en bici',
             navigatorKey: navigatorkey,
             theme: appTheme.getThemeData(isDarkMode),
+            debugShowCheckedModeBanner: false,
 
             // ✅ TODAS LAS RUTAS EN UN SOLO LUGAR
             routes: {

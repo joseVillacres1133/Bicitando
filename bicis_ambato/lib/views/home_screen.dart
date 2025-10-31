@@ -2,6 +2,7 @@ import 'package:bicis_ambato/blocs/home_initial/bike_reserve_cubit.dart';
 import 'package:bicis_ambato/widget/home/drawer.dart';
 import 'package:bicis_ambato/widget/home/map_reserve.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/qrcode/qr_data_cubit.dart';
@@ -38,6 +39,18 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+    );
+    
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+    );
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => QrDataCubit()),

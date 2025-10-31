@@ -1,5 +1,6 @@
 import 'package:bicis_ambato/style/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 const seedColor = primaryColor;
 const ligthColor = purple; //Color.fromARGB(255, 1, 72, 226);
@@ -28,6 +29,13 @@ class AppTheme {
         ),
         iconTheme: const IconThemeData(color: primaryColor),
 
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent, // Status bar transparente
+            statusBarIconBrightness: Brightness.dark, // Iconos oscuros
+            statusBarBrightness: Brightness.light, // Para iOS
+          ),
+        ),
         //colorScheme: lightScheme(),
 
         //canvasColor: purple,
@@ -41,5 +49,14 @@ class AppTheme {
           textTheme: ButtonTextTheme
               .primary, // Estilo de texto para los botones en tema claro
         ),
+
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light, // Iconos claros en dark mode
+            statusBarBrightness: Brightness.dark, // Para iOS
+          ),
+        ),
+
       );
 }
