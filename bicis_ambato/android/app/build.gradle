@@ -27,7 +27,7 @@ def keystorePropertiesFile = rootProject.file("key.properties")
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    namespace "com.mivilsoft.bicis_ambato"
+    namespace "com.mivilsoft.bicisambato"
     compileSdk 35
     ndkVersion "27.0.12077973"
 
@@ -52,7 +52,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mivilsoft.bicis_ambato"
+        applicationId "com.mivilsoft.bicisambato"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
