@@ -284,7 +284,7 @@ class _LoginFormState extends State<LoginForm> {
                             topRight: Radius.circular(20)),
                         // color: whiteColor,
                       ),
-                      //child: SingleChildScrollView(
+                      child: SingleChildScrollView(
                       child: Column(children: [
                         const Text(
                           str_start_session,
@@ -322,6 +322,7 @@ class _LoginFormState extends State<LoginForm> {
                       ]),
                       // ),
                     ),
+                  ),
                   ),
                 ],
               );
