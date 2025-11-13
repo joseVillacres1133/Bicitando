@@ -8,6 +8,7 @@ import '../../data/repository.dart';
 import '../../style/style.dart';
 import '../utils/constants_msg.dart';
 import '../widget/auth/register/register_form.dart';
+import 'package:flutter/services.dart';
 
 //Construccion de la Page para Register
 //Aqui se aplica los eventos y estados del Registerbloc
@@ -32,6 +33,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // SIEMPRE íconos claros
+        statusBarBrightness: Brightness.dark, // Para iOS
+      ),
+    );
     return SafeArea(
         child: Scaffold(
       resizeToAvoidBottomInset: true,

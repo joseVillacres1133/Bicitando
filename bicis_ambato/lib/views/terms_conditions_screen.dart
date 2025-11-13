@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../data/repository.dart';
 import '../widget/terms.dart';
+import 'package:flutter/services.dart';
 
 class TermsConditionsScreen extends StatefulWidget {
 
@@ -22,6 +23,13 @@ class TermsConditionsScreen extends StatefulWidget {
 class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // SIEMPRE íconos claros
+        statusBarBrightness: Brightness.dark, // Para iOS
+      ),
+    );
     return PopScope(
         child: SafeArea(child: 
         Scaffold(

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/qrcode/qr_data_cubit.dart';
 import '../data/repository.dart';
 import '../utils/constants_msg.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   final double? latitud;
@@ -38,6 +39,13 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // SIEMPRE íconos claros
+        statusBarBrightness: Brightness.dark, // Para iOS
+      ),
+    );
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => QrDataCubit()),

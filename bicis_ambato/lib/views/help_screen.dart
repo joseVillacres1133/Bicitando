@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../data/repository.dart';
 import '../style/style.dart';
 import '../widget/frequent_questios.dart';
+import 'package:flutter/services.dart';
 
 import 'dart:io' show Platform;
 
@@ -26,6 +27,13 @@ class _HelpScreenState extends State<HelpScreen> {
   DateTime dateTime = DateTime.now();
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // SIEMPRE íconos claros
+        statusBarBrightness: Brightness.dark, // Para iOS
+      ),
+    );
     return PopScope(
         child: SafeArea(
             child: Scaffold(

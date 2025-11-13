@@ -10,6 +10,7 @@ import '../data/models/odoo/Travel.dart';
 import '../data/repository.dart';
 import '../style/style.dart';
 import '../utils/constants_msg.dart';
+import 'package:flutter/services.dart';
 
 class HistoryScreen extends StatefulWidget {
   //final Repository? _repository;
@@ -48,6 +49,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // SIEMPRE íconos claros
+        statusBarBrightness: Brightness.dark, // Para iOS
+      ),
+    );
     return PopScope(
         canPop: false,
         onPopInvoked: (didPop) {

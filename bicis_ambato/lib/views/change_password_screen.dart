@@ -8,6 +8,7 @@ import '../blocs/auth/resetPass/bloc.dart';
 import '../style/style.dart';
 import '../utils/constants_msg.dart';
 import '../widget/auth/change_password_form.dart';
+import 'package:flutter/services.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -28,6 +29,13 @@ class _EditProfileScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // SIEMPRE íconos claros
+        statusBarBrightness: Brightness.dark, // Para iOS
+      ),
+    );
     return PopScope(
         canPop: false,
         onPopInvoked: (didPop) {

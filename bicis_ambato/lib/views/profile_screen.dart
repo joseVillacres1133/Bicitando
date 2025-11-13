@@ -13,6 +13,7 @@ import '../data/auth_provider.dart';
 import '../utils/constants_msg.dart';
 import '../utils/sharedprefs_helper.dart';
 import '../widget/profile/image_profile.dart';
+import 'package:flutter/services.dart';
 
 class ProfileScreen extends StatefulWidget {
   Uint8List? bytesImage;
@@ -50,6 +51,13 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light, // SIEMPRE íconos claros
+        statusBarBrightness: Brightness.dark, // Para iOS
+      ),
+    );
     final String stateDocument = _prefs.verifiedUser;
     //final String stateDocument = "approved";
     Map<String,dynamic> map = findState(stateDocument);
@@ -64,23 +72,30 @@ class ProfileScreenState extends State<ProfileScreen> {
           onPopInvoked: (didPop) {
             Navigator.pushReplacementNamed(context, 'home');
           },
-          child: SafeArea(child:   
-          Scaffold(
-            body: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: SafeArea(
+  child: Scaffold(
+    body: Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        // Header fijo arriba
+        Header(
+          nameScreen: str_profile,
+          route: str_rout_home,
+        ),
+        
+        // Contenido scrolleable en el medio
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Header(
-                  nameScreen: str_profile,
-                  route: str_rout_home,
-                ),
-
+                const SizedBox(height: 15),
+                // Perfil con imagen y datos
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    ImageProfile(width: 75, height: 75,expadend:  true),
+                    ImageProfile(width: 75, height: 75, expadend: true),
                     Flexible(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -112,18 +127,18 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-                //const SizedBox(height: 15),
+                
+                // Container con Historial y Ayuda
                 Container(
                   margin: const EdgeInsets.fromLTRB(50, 5, 50, 35),
                   padding: const EdgeInsets.symmetric(vertical: 3),
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: greyColor,
-                      width: 1.0, // Grosor del borde
-                      style: BorderStyle.solid, // Estilo (solid, dashed, etc.)
+                      width: 1.0,
+                      style: BorderStyle.solid,
                     ),
-                    borderRadius: BorderRadius.circular(
-                        10.0), // Bordes redondeados (opcional)
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -153,13 +168,16 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 Navigator.of(context)
                                     .pushReplacementNamed(str_rout_help);
                               },
-                              child: const Icon(Icons.help_outline_rounded)),
+                              child:
+                                  const Icon(Icons.help_outline_rounded)),
                           const Text(str_help)
                         ],
                       ),
                     ],
                   ),
                 ),
+                
+                // Información personal
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -182,12 +200,13 @@ class ProfileScreenState extends State<ProfileScreen> {
                     )
                   ],
                 ),
-
+                const SizedBox(height: 15),
+                
+                // Card con información
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 30),
                   child: Card(
                       elevation: 1,
-                      //borderRadius: BorderRadius.circular(12),
                       child: Padding(
                         padding: const EdgeInsetsDirectional.all(10),
                         child: Column(
@@ -195,8 +214,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             ListTile(
-                              leading:
-                                  const Icon(Icons.contact_emergency_outlined),
+                              leading: const Icon(
+                                  Icons.contact_emergency_outlined),
                               title: Text(
                                 _prefs.cedula,
                                 style: const TextStyle(
@@ -204,14 +223,15 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               subtitle: const Text(str_ci,
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold)),
                             ),
                             const Divider(
                               height: 1,
                             ),
                             ListTile(
-                              leading: const Icon(Icons.other_houses_rounded),
+                              leading:
+                                  const Icon(Icons.other_houses_rounded),
                               title: Text(
                                 _prefs.direccion,
                                 style: const TextStyle(
@@ -220,14 +240,16 @@ class ProfileScreenState extends State<ProfileScreen> {
                               ),
                               subtitle: const Text(
                                 str_address,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style:
+                                    TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                             const Divider(
                               height: 1,
                             ),
                             ListTile(
-                              leading: const Icon(Icons.phone_iphone_rounded),
+                              leading:
+                                  const Icon(Icons.phone_iphone_rounded),
                               title: Text(
                                 _prefs.telefono,
                                 style: const TextStyle(
@@ -235,35 +257,54 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               subtitle: const Text(str_phone,
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ),
                       )),
                 ),
-
+                const SizedBox(height: 20),
+                
+                // Botones
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushReplacementNamed("change-psswd");
+                    Navigator.of(context)
+                        .pushReplacementNamed("change-psswd");
                   },
-                  style: ElevatedButton.styleFrom(
-                      // backgroundColor: primaryColor,
-                      //foregroundColor: whiteColor,
-                      ),
+                  style: ElevatedButton.styleFrom(),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 48.0), // Adjust the padding as needed
+                        vertical: 16.0, horizontal: 48.0),
                     child: Text(str_change_passwd),
                   ),
                 ),
-                const BarMunicipio()
+                const SizedBox(height: 15),
+                
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushReplacementNamed("information-account");
+                  },
+                  style: ElevatedButton.styleFrom(),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 16.0, horizontal: 48.0),
+                    child: Text("Eliminar Cuenta"),
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
-        )
+        ),
         
+        // Barra del municipio fija abajo
+        const BarMunicipio()
+      ],
+    ),
+  ),
+),
         
         ));
   }

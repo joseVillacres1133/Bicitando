@@ -7,6 +7,7 @@ import 'package:bicis_ambato/config/theme/app_theme.dart';
 import 'package:bicis_ambato/views/document_indications_screen.dart';
 import 'package:bicis_ambato/views/help_screen.dart';
 import 'package:bicis_ambato/views/history_screen.dart';
+import 'package:bicis_ambato/views/information_account_screen.dart';
 import 'package:bicis_ambato/views/terms_conditions_screen.dart';
 // IMPORTAR TUS NUEVAS PANTALLAS
 import 'package:bicis_ambato/widget/location_permission_screen.dart';
@@ -299,6 +300,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   context: ctx,
                   bytesImage: _bytesImage),
               'change-psswd': (ctx) => const ChangePasswordScreen(),
+              'information-account': (ctx) => const InformationAccountScreen(),
               'upload-file': (ctx) =>
                   DocumentIndicationsScreen(repository: _repositoryAuth),
             },
